@@ -13,6 +13,8 @@ Integración entre una hoja de Google Sheets y Tango (Tango Gestión): lee órde
 | Botón en una página web | Pendiente |
 | Envío a Tango | Pendiente |
 
+Documentación completa: [docs/DOCUMENTACION.md](docs/DOCUMENTACION.md).
+
 ## Hoja
 
 [Ordenes de compra](https://docs.google.com/spreadsheets/d/1JpJsLLxULTpywNy6FopjpHGWGavG1Ve0gfR7G_f5UHs/edit), hoja 1. Columnas: `Empresa`, `nro`, `desc`, `cantidad`, `precio unitario`, `total`, `Estado tango`. **Cada fila es una orden.** La hoja tiene que estar compartida por link.
