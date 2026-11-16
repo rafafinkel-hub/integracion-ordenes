@@ -73,4 +73,5 @@ npm test
 | `src/procesar.js` | Parseo del CSV, validación y armado del TXT (sin red ni archivos). |
 | `src/index.js` | Lee la hoja o un CSV, escribe los archivos de `salida/`. |
 | `src/sheets.js` | Escritura del estado en la hoja (JWT de cuenta de servicio + Sheets API). |
+| `.claude/agents/probador.md` | Subagente de Claude Code que corre y mantiene las pruebas (`@probador`). |
 | `tests/` | Pruebas de la lógica y de la escritura (con `fetch` simulado). |
