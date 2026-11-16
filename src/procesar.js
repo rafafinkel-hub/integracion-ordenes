@@ -47,6 +47,7 @@ function procesar(filasCSV) {
       estado: faltan.length ? `rechazada: falta ${faltan.join(', ')}` : 'procesada',
     });
   });
+  resultados.colEstado = idx[COL_ESTADO]; // índice (0) de la columna "Estado tango"
   return resultados;
 }
 

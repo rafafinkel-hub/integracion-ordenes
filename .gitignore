@@ -1,2 +1,5 @@
 salida/
 node_modules/
+.env
+credenciales*.json
+*-sa.json

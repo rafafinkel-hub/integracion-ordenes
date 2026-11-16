@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 // Uso: node src/index.js [--archivo ruta.csv]
+// Con --escribir-estados escribe "Estado tango" en la hoja (cuenta de servicio:
+// GOOGLE_APPLICATION_CREDENTIALS=ruta/al/credenciales.json).
 // Sin --archivo baja la hoja de Google Sheets (compartida por link).
 const fs = require('fs');
 const path = require('path');
+const { escribirEstados } = require('./sheets');
 const { parsearCSV, procesar, armarTXT } = require('./procesar');
 
 const SHEET_ID = '1JpJsLLxULTpywNy6FopjpHGWGavG1Ve0gfR7G_f5UHs';
@@ -41,4 +44,15 @@ async function leerCSV() {
   resultados.filter(r => r.estado.startsWith('rechazada'))
     .forEach(r => console.log(`  fila ${r.fila}: ${r.estado}`));
   console.log(`TXT: ${txt}\nEstados: ${est}`);
+
+  if (process.argv.includes('--escribir-estados')) {
+    const ruta = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    if (!ruta) throw new Error('Falta GOOGLE_APPLICATION_CREDENTIALS (ruta al JSON de la cuenta de servicio)');
+    if (process.argv.includes('--archivo')) throw new Error('--escribir-estados no se puede usar con --archivo: las filas deben venir de la hoja');
+    const n = await escribirEstados({
+      cred: JSON.parse(fs.readFileSync(ruta, 'utf8')),
+      sheetId: SHEET_ID, colEstado: resultados.colEstado, resultados,
+    });
+    console.log(`Estado tango escrito en la hoja: ${n} filas`);
+  }
 })().catch(e => { console.error('Error:', e.message); process.exit(1); });

@@ -9,7 +9,7 @@ Integración entre una hoja de Google Sheets y Tango (Tango Gestión): lee órde
 | Leer la hoja y validar filas | Hecho |
 | Generar TXT separado por comas | Hecho |
 | Estado tango por fila (archivo de resultados) | Hecho |
-| Escribir `Estado tango` en la hoja | Pendiente (con el botón web) |
+| Escribir `Estado tango` en la hoja (cuenta de servicio) | Hecho (falta probar contra la hoja real: requiere las credenciales) |
 | Botón en una página web | Pendiente |
 | Envío a Tango | Pendiente |
 
@@ -42,7 +42,21 @@ node src/index.js --archivo ruta/al/archivo.csv
 Genera en `salida/` (no se sube a git):
 
 - `ordenes_DD-MM-AAAA_HHMM.txt`: órdenes válidas, separadas por comas, con encabezado.
-- `estado_tango_DD-MM-AAAA_HHMM.csv`: fila de la hoja, `nro` y estado (`procesada` o `rechazada: motivo`). Por ahora **no se escribe en la hoja**.
+- `estado_tango_DD-MM-AAAA_HHMM.csv`: fila de la hoja, `nro` y estado (`procesada` o `rechazada: motivo`). Se escribe en la hoja solo con `--escribir-estados` (ver abajo).
+
+## Escribir `Estado tango` en la hoja
+
+Usa una **cuenta de servicio** de Google (sin dependencias, la firma se hace con `crypto` de Node).
+
+1. En Google Cloud: crear un proyecto, habilitar la **Google Sheets API**, crear una cuenta de servicio y descargar su clave en JSON.
+2. Compartir la hoja con el `client_email` de la cuenta de servicio como **Editor**.
+3. Correr:
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=ruta/credenciales.json node src/index.js --escribir-estados
+```
+
+Escribe `procesada` o `rechazada: motivo` en la columna `Estado tango` de cada fila procesada o rechazada; las omitidas no se tocan. No se puede combinar con `--archivo`. Los JSON de credenciales están en `.gitignore`: **no los subas a git**.
 
 ## Pruebas
 
@@ -56,4 +70,5 @@ npm test
 |---|---|
 | `src/procesar.js` | Parseo del CSV, validación y armado del TXT (sin red ni archivos). |
 | `src/index.js` | Lee la hoja o un CSV, escribe los archivos de `salida/`. |
-| `tests/procesar.test.js` | Pruebas de la lógica. |
+| `src/sheets.js` | Escritura del estado en la hoja (JWT de cuenta de servicio + Sheets API). |
+| `tests/` | Pruebas de la lógica y de la escritura (con `fetch` simulado). |
