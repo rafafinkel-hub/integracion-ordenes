@@ -53,7 +53,7 @@ async function leerCSV() {
     if (!ruta && !json) throw new Error('Falta GOOGLE_APPLICATION_CREDENTIALS (ruta al JSON) o GOOGLE_CREDENTIALS_JSON (contenido del JSON)');
     if (process.argv.includes('--archivo')) throw new Error('--escribir-estados no se puede usar con --archivo: las filas deben venir de la hoja');
     const n = await escribirEstados({
-      cred: JSON.parse(json || fs.readFileSync(ruta, 'utf8')),
+      cred: JSON.parse(json ? (json.trim().startsWith('{') ? json : Buffer.from(json, 'base64').toString('utf8')) : fs.readFileSync(ruta, 'utf8')),
       sheetId: SHEET_ID, colEstado: resultados.colEstado, resultados,
     });
     console.log(`Estado tango escrito en la hoja: ${n} filas`);
