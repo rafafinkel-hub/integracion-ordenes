@@ -58,6 +58,8 @@ Usa una **cuenta de servicio** de Google (sin dependencias, la firma se hace con
 GOOGLE_APPLICATION_CREDENTIALS=ruta/credenciales.json node src/index.js --escribir-estados
 ```
 
+También se acepta `GOOGLE_CREDENTIALS_JSON` con el contenido del JSON (útil en la nube). `--hoja ID` apunta a otra hoja, por ejemplo una copia de prueba.
+
 Escribe `procesada` o `rechazada: motivo` en la columna `Estado tango` de cada fila procesada o rechazada; las omitidas no se tocan. No se puede combinar con `--archivo`. Los JSON de credenciales están en `.gitignore`: **no los subas a git**.
 
 ## Pruebas
