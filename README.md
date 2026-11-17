@@ -2,15 +2,15 @@
 
 Integración entre una hoja de Google Sheets y Tango (Tango Gestión): lee órdenes de compra de la hoja y las deja en un TXT. Más adelante se enviarán a Tango.
 
-## Estado (16/11/2026)
+## Estado (17/11/2026)
 
 | Etapa | Estado |
 |---|---|
 | Leer la hoja y validar filas | Hecho |
 | Generar TXT separado por comas | Hecho |
 | Estado tango por fila (archivo de resultados) | Hecho |
-| Escribir `Estado tango` en la hoja (cuenta de servicio) | Hecho (falta probar contra la hoja real: requiere las credenciales) |
-| Botón en una página web (importar + listado de resultados) | Hecho: `npm run web` (el envío real a Tango sigue pendiente) |
+| Escribir `Estado tango` en la hoja (cuenta de servicio) | Hecho y probado contra la hoja real |
+| Botón en una página web (importar + listado de resultados) | Hecho: `npm run web` y desplegada en Netlify (el envío real a Tango sigue pendiente) |
 | Envío a Tango | Pendiente |
 
 Documentación completa: [docs/DOCUMENTACION.md](docs/DOCUMENTACION.md).
@@ -75,6 +75,9 @@ npm test
 | `src/procesar.js` | Parseo del CSV, validación y armado del TXT (sin red ni archivos). |
 | `src/index.js` | Lee la hoja o un CSV, escribe los archivos de `salida/`. |
 | `src/sheets.js` | Escritura del estado en la hoja (JWT de cuenta de servicio + Sheets API). |
+| `src/importar.js`, `src/acceso.js` | Importación reutilizable y clave de acceso (las usa la web). |
+| `src/servidor.js`, `public/index.html` | Servidor local y página con el botón. |
+| `netlify/functions/importar.js`, `netlify.toml` | Versión para Netlify. |
 | `.claude/agents/probador.md` | Subagente de Claude Code que corre y mantiene las pruebas (`@probador`). |
 | `tests/` | Pruebas de la lógica y de la escritura (con `fetch` simulado). |
 
