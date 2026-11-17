@@ -10,7 +10,7 @@ Integración entre una hoja de Google Sheets y Tango (Tango Gestión): lee órde
 | Generar TXT separado por comas | Hecho |
 | Estado tango por fila (archivo de resultados) | Hecho |
 | Escribir `Estado tango` en la hoja (cuenta de servicio) | Hecho (falta probar contra la hoja real: requiere las credenciales) |
-| Botón en una página web | Pendiente |
+| Botón en una página web (importar + listado de resultados) | Hecho: `npm run web` (el envío real a Tango sigue pendiente) |
 | Envío a Tango | Pendiente |
 
 Documentación completa: [docs/DOCUMENTACION.md](docs/DOCUMENTACION.md).

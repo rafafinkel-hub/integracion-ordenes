@@ -4,6 +4,7 @@
   "description": "Lee órdenes de compra de una hoja de Google y las deja en un TXT (luego se enviarán a Tango).",
   "scripts": {
     "start": "node src/index.js",
+    "web": "node src/servidor.js",
     "test": "node --test tests/*.test.js"
   },
   "license": "UNLICENSED",

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Importar órdenes</title>
+<style>
+  :root { --fondo:#f6f7f9; --tarjeta:#fff; --texto:#1c1f24; --suave:#667085; --borde:#e3e6ea;
+          --azul:#1f5eff; --ok:#137a3d; --okbg:#e3f5ea; --mal:#b42318; --malbg:#fde8e6; --omi:#667085; --omibg:#eef0f3; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fondo:#14161a; --tarjeta:#1d2026; --texto:#eceef1; --suave:#9aa3b0; --borde:#2d323a;
+            --azul:#5b8cff; --ok:#6fdc9a; --okbg:#173525; --mal:#ff8f84; --malbg:#3a1c19; --omi:#9aa3b0; --omibg:#2a2e35; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.4 system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  p.sub { color: var(--suave); margin: 0 0 20px; }
+  button { background: var(--azul); color:#fff; border:0; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+  #resumen { margin: 20px 0 12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { padding:4px 12px; border-radius:999px; font-size:.9rem; }
+  .chip.ok { background:var(--okbg); color:var(--ok); } .chip.mal { background:var(--malbg); color:var(--mal); } .chip.omi { background:var(--omibg); color:var(--omi); }
+  #msg { margin-top:16px; }
+  .error { background:var(--malbg); color:var(--mal); padding:12px 14px; border-radius:8px; }
+  .tabla { background:var(--tarjeta); border:1px solid var(--borde); border-radius:10px; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:10px 14px; border-bottom:1px solid var(--borde); white-space:nowrap; }
+  th { color:var(--suave); font-weight:600; font-size:.85rem; }
+  tr:last-child td { border-bottom:0; }
+  td.estado.procesada { color:var(--ok); } td.estado.rechazada { color:var(--mal); } td.estado.omitida { color:var(--omi); }
+  .vacio { color:var(--suave); padding:16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Órdenes de compra</h1>
+  <p class="sub">Lee la hoja, valida cada fila y marca el <b>Estado tango</b>.</p>
+  <button id="importar">Importar órdenes a Tango</button>
+  <div id="msg"></div>
+  <div id="resumen"></div>
+  <div class="tabla"><table>
+    <thead><tr><th>Fila</th><th>Empresa</th><th>nro</th><th>Descripción</th><th>Total</th><th>Resultado</th></tr></thead>
+    <tbody id="filas"><tr><td colspan="6" class="vacio">Todavía no se importó nada.</td></tr></tbody>
+  </table></div>
+</main>
+<script>
+const btn = document.getElementById('importar'), msg = document.getElementById('msg');
+const resumen = document.getElementById('resumen'), filas = document.getElementById('filas');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+btn.onclick = async () => {
+  btn.disabled = true; btn.textContent = 'Importando…'; msg.innerHTML = '';
+  try {
+    const res = await fetch('/api/importar', { method: 'POST' });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || 'Error ' + res.status);
+    resumen.innerHTML =
+      `<span class="chip ok">Procesadas: ${d.resumen.procesadas}</span>` +
+      `<span class="chip mal">Rechazadas: ${d.resumen.rechazadas}</span>` +
+      `<span class="chip omi">Omitidas: ${d.resumen.omitidas}</span>`;
+    filas.innerHTML = d.filas.length ? d.filas.map(f => {
+      const clase = f.estado.split(':')[0];
+      return `<tr><td>${f.fila}</td><td>${esc(f.empresa)}</td><td>${esc(f.nro)}</td><td>${esc(f.desc)}</td><td>${esc(f.total)}</td>` +
+             `<td class="estado ${clase}">${esc(f.estado === 'omitida' ? 'omitida (ya tenía estado)' : f.estado)}</td></tr>`;
+    }).join('') : '<tr><td colspan="6" class="vacio">La hoja no tiene órdenes.</td></tr>';
+  } catch (e) {
+    msg.innerHTML = `<div class="error">${esc(e.message)}</div>`;
+  } finally { btn.disabled = false; btn.textContent = 'Importar órdenes a Tango'; }
+};
+</script>
+</body>
+</html>
