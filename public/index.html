@@ -16,6 +16,7 @@
   main { max-width: 860px; margin: 0 auto; padding: 32px 16px; }
   h1 { font-size: 1.4rem; margin: 0 0 4px; }
   p.sub { color: var(--suave); margin: 0 0 20px; }
+  input { padding:10px 12px; border:1px solid var(--borde); border-radius:8px; background:var(--tarjeta); color:var(--texto); font-size:1rem; }
   button { background: var(--azul); color:#fff; border:0; border-radius:8px; padding:12px 20px; font-size:1rem; cursor:pointer; }
   button:disabled { opacity:.6; cursor:wait; }
   #resumen { margin: 20px 0 12px; display:flex; gap:8px; flex-wrap:wrap; }
@@ -36,6 +37,7 @@
 <main>
   <h1>Órdenes de compra</h1>
   <p class="sub">Lee la hoja, valida cada fila y marca el <b>Estado tango</b>.</p>
+  <p><input id="clave" type="password" placeholder="Clave de acceso" autocomplete="current-password"></p>
   <button id="importar">Importar órdenes a Tango</button>
   <div id="msg"></div>
   <div id="resumen"></div>
@@ -45,6 +47,8 @@
   </table></div>
 </main>
 <script>
+const clave = document.getElementById('clave');
+try { clave.value = sessionStorage.getItem('clave') || ''; } catch {}
 const btn = document.getElementById('importar'), msg = document.getElementById('msg');
 const resumen = document.getElementById('resumen'), filas = document.getElementById('filas');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -52,8 +56,9 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 btn.onclick = async () => {
   btn.disabled = true; btn.textContent = 'Importando…'; msg.innerHTML = '';
   try {
-    const res = await fetch('/api/importar', { method: 'POST' });
+    const res = await fetch('/api/importar', { method: 'POST', headers: { 'x-clave': clave.value } });
     const d = await res.json();
+    try { sessionStorage.setItem('clave', clave.value); } catch {}
     if (!res.ok) throw new Error(d.error || 'Error ' + res.status);
     resumen.innerHTML =
       `<span class="chip ok">Procesadas: ${d.resumen.procesadas}</span>` +

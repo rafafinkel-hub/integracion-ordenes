@@ -77,3 +77,15 @@ npm test
 | `src/sheets.js` | Escritura del estado en la hoja (JWT de cuenta de servicio + Sheets API). |
 | `.claude/agents/probador.md` | Subagente de Claude Code que corre y mantiene las pruebas (`@probador`). |
 | `tests/` | Pruebas de la lógica y de la escritura (con `fetch` simulado). |
+
+## Página web
+
+```bash
+CLAVE_ACCESO=unaClave npm run web   # http://127.0.0.1:3000
+```
+
+La página (`public/index.html`) pide la clave y llama a `POST /api/importar`. Sin `CLAVE_ACCESO` configurada, el endpoint rechaza todo.
+
+### Netlify
+
+`netlify.toml` publica `public/` y expone la función `netlify/functions/importar.js` en `/api/importar`. Variables del sitio: `GOOGLE_CREDENTIALS_JSON` (JSON de la cuenta de servicio, o en base64) y `CLAVE_ACCESO`. En Netlify no se guarda el TXT (disco de solo lectura).

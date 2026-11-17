@@ -28,9 +28,9 @@ async function importar({ sheetId = SHEET_ID, fetchFn = fetch, carpetaSalida = p
   const cuenta = e => resultados.filter(r => r.estado.startsWith(e)).length;
   const resumen = { procesadas: cuenta('procesada'), rechazadas: cuenta('rechazada'), omitidas: cuenta('omitida') };
 
-  // El TXT solo se genera si hay órdenes nuevas válidas (evita archivos vacíos).
+  // El TXT solo se genera si hay órdenes nuevas válidas (evita archivos vacíos) y hay carpeta (null = no guardar).
   let txt = null;
-  if (resumen.procesadas) {
+  if (resumen.procesadas && carpetaSalida) {
     fs.mkdirSync(carpetaSalida, { recursive: true });
     txt = path.join(carpetaSalida, `ordenes_${sello()}.txt`);
     fs.writeFileSync(txt, armarTXT(resultados));
